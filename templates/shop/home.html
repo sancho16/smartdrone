@@ -3,44 +3,152 @@
 {% block title %}SmartDrone{% endblock %}
 {% block extra_css %}
 <style>
-  .hero { position:relative; overflow:hidden; border-radius:24px; padding:80px 48px;
-    background:linear-gradient(135deg, var(--bg) 0%, var(--surface2) 50%, var(--bg) 100%);
-    border:1px solid var(--border); }
-  .hero::before { content:''; position:absolute; inset:0; pointer-events:none;
-    background:radial-gradient(ellipse at 65% 50%, rgba(123,29,46,0.15) 0%, transparent 60%),
-               radial-gradient(ellipse at 10% 80%, rgba(201,168,76,0.06) 0%, transparent 45%); }
-  .hero::after { content:''; position:absolute; top:0; right:0; width:220px; height:220px;
-    background:radial-gradient(circle at top right, rgba(201,168,76,0.1), transparent 70%); pointer-events:none; }
-  .hero-content { position:relative; z-index:1; max-width:56%; }
-  .hero-badge { display:inline-flex; align-items:center; gap:6px;
-    background:rgba(201,168,76,0.1); border:1px solid var(--border-gold);
-    border-radius:50px; padding:5px 16px; font-size:0.78rem; font-weight:600;
-    color:var(--gold); margin-bottom:1.5rem; letter-spacing:0.3px; }
-  .hero h1 { font-size:clamp(2.2rem,5.5vw,4rem); font-weight:900; line-height:1.05;
-    letter-spacing:-2px; margin-bottom:1.5rem; color:var(--text); }
-  .hero h1 .accent-word { background:linear-gradient(135deg, var(--wine-lite), var(--gold));
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .hero-drone-img { position:absolute; right:-10px; top:50%; transform:translateY(-50%);
-    width:42%; max-width:480px; opacity:0.88;
-    filter:drop-shadow(0 0 50px rgba(123,29,46,0.4)) drop-shadow(0 0 20px rgba(201,168,76,0.15)); }
-  .service-card { background:var(--surface); border:1px solid var(--border); border-radius:20px;
-    padding:2rem; transition:all 0.3s; }
-  .service-card:hover { border-color:var(--gold-dim); transform:translateY(-4px);
-    box-shadow:0 14px 40px var(--shadow), 0 0 0 1px rgba(201,168,76,0.08); }
-  .service-icon { width:52px; height:52px; border-radius:13px;
-    display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin-bottom:1rem; }
+  /* ── Video Hero ── */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+  }
+  .hero-video-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .hero-video-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    /* slight desaturation so text stays readable */
+    filter: brightness(0.55) saturate(0.85);
+  }
+  /* Gradient overlay — dark at edges, slightly transparent center */
+  .hero-video-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right,  rgba(10,6,8,0.75) 0%, rgba(10,6,8,0.2) 55%, rgba(10,6,8,0.55) 100%),
+      linear-gradient(to bottom, rgba(10,6,8,0.4) 0%, transparent 40%, rgba(10,6,8,0.6) 100%);
+  }
+  /* Fallback gradient when no video */
+  .hero-fallback {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--surface2) 50%, var(--bg) 100%);
+    z-index: 0;
+  }
+  .hero-fallback::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 65% 50%, rgba(123,29,46,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 10% 80%, rgba(201,168,76,0.07) 0%, transparent 45%);
+  }
+  .hero-fallback::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle at top right, rgba(201,168,76,0.12), transparent 70%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 80px 48px;
+    max-width: 620px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 50px; padding: 5px 16px;
+    font-size: 0.78rem; font-weight: 600;
+    color: var(--gold); margin-bottom: 1.5rem; letter-spacing: 0.3px;
+    backdrop-filter: blur(8px);
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 5.5vw, 4rem);
+    font-weight: 900; line-height: 1.05;
+    letter-spacing: -2px; margin-bottom: 1.5rem;
+    color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+  .hero h1 .accent-word {
+    background: linear-gradient(135deg, var(--wine-lite), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero p.lead {
+    color: rgba(255,255,255,0.75);
+    text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+  }
+  /* Video mute toggle button */
+  .video-ctrl {
+    position: absolute;
+    bottom: 18px; right: 18px;
+    z-index: 2;
+    background: rgba(10,6,8,0.55);
+    border: 1px solid var(--border-gold);
+    color: var(--gold);
+    border-radius: 50%;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1rem;
+    backdrop-filter: blur(8px);
+    transition: background 0.2s;
+  }
+  .video-ctrl:hover { background: rgba(123,29,46,0.6); }
+
+  /* ── Service cards ── */
+  .service-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 2rem; transition: all 0.3s;
+  }
+  .service-card:hover {
+    border-color: var(--gold-dim); transform: translateY(-4px);
+    box-shadow: 0 14px 40px var(--shadow), 0 0 0 1px rgba(201,168,76,0.08);
+  }
+  .service-icon {
+    width: 52px; height: 52px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 1rem;
+  }
 </style>
 {% endblock %}
+
 {% block content %}
 
+<!-- ── Hero with 4K video background ── -->
 <div class="hero mb-5 fade-up">
+
+  <!-- Video background (shows if background.mov / background.mp4 exists) -->
+  <div class="hero-video-wrap" id="heroVideoWrap">
+    <video id="heroBg" autoplay muted loop playsinline preload="auto"
+           onerror="document.getElementById('heroVideoWrap').style.display='none';document.getElementById('heroFallback').style.display='block';">
+      <source src="{% static 'videos/background.mov' %}" type="video/quicktime"/>
+      <source src="{% static 'videos/background.mp4' %}" type="video/mp4"/>
+    </video>
+  </div>
+
+  <!-- Fallback gradient (shown if no video file present) -->
+  <div class="hero-fallback" id="heroFallback" style="display:none;"></div>
+
+  <!-- Content -->
   <div class="hero-content">
     <div class="hero-badge"><i class="bi bi-stars"></i> {% t 'hero_badge' %}</div>
     <h1>{% t 'hero_h1a' %}<br/><span class="accent-word">{% t 'hero_h1b' %}</span></h1>
-    <p class="lead mb-4" style="color:var(--text-muted);font-size:1.05rem;max-width:460px;line-height:1.7;">{% t 'hero_sub' %}</p>
+    <p class="lead mb-4" style="font-size:1.05rem;max-width:460px;line-height:1.7;">{% t 'hero_sub' %}</p>
     <div class="d-flex gap-3 flex-wrap">
-      <a href="{% url 'drone_list' %}" class="btn btn-accent btn-lg px-5 py-3"><i class="bi bi-drone me-2"></i>{% t 'hero_btn_shop' %}</a>
-      <a href="{% url 'repair_home' %}" class="btn btn-gold btn-lg px-5 py-3"><i class="bi bi-tools me-2"></i>{% t 'hero_btn_repair' %}</a>
+      <a href="{% url 'drone_list' %}" class="btn btn-accent btn-lg px-5 py-3">
+        <i class="bi bi-drone me-2"></i>{% t 'hero_btn_shop' %}
+      </a>
+      <a href="{% url 'repair_home' %}" class="btn btn-gold btn-lg px-5 py-3">
+        <i class="bi bi-tools me-2"></i>{% t 'hero_btn_repair' %}
+      </a>
     </div>
     <div class="d-flex gap-3 mt-4 flex-wrap">
       <span class="stat-chip"><i class="bi bi-drone"></i> {% t 'chip_models' %}</span>
@@ -48,14 +156,17 @@
       <span class="stat-chip"><i class="bi bi-lightning-charge"></i> {% t 'chip_urgent' %}</span>
     </div>
   </div>
-  <img src="https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=700&q=85"
-       class="hero-drone-img d-none d-lg-block" alt="Drone"/>
+
+  <!-- Mute / unmute toggle -->
+  <button class="video-ctrl" id="videoMuteBtn" title="Activar/desactivar sonido" onclick="toggleVideoMute()">
+    <i class="bi bi-volume-mute-fill" id="muteIcon"></i>
+  </button>
 </div>
 
-<!-- Services -->
+<!-- ── Services ── -->
 <div class="row g-4 mb-5">
   <div class="col-md-4">
-    <div class="service-card h-100 drone-sound-card" data-sound="shop">
+    <div class="service-card h-100">
       <div class="service-icon" style="background:rgba(123,29,46,0.15);">
         <i class="bi bi-drone" style="color:var(--wine-lite);"></i>
       </div>
@@ -65,7 +176,7 @@
     </div>
   </div>
   <div class="col-md-4">
-    <div class="service-card h-100 drone-sound-card" data-sound="repair">
+    <div class="service-card h-100">
       <div class="service-icon" style="background:rgba(201,168,76,0.1);">
         <i class="bi bi-tools" style="color:var(--gold);"></i>
       </div>
@@ -75,7 +186,7 @@
     </div>
   </div>
   <div class="col-md-4">
-    <div class="service-card h-100 drone-sound-card" data-sound="camera">
+    <div class="service-card h-100">
       <div class="service-icon" style="background:rgba(123,29,46,0.1);">
         <i class="bi bi-camera-video" style="color:var(--wine-lite);"></i>
       </div>
@@ -88,6 +199,7 @@
 
 <div class="glow-line"></div>
 
+<!-- ── Featured drones ── -->
 {% if drones %}
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h2 class="section-title mb-0">{% t 'featured_title' %}</h2>
@@ -97,14 +209,22 @@
   {% for drone in drones %}
   <div class="col-6 col-md-4 col-lg-3">
     <div class="drone-card h-100">
-      {% if drone.image %}<img src="{{ drone.image.url }}" alt="{{ drone.name }}"/>
-      {% elif drone.image_url %}<img src="{{ drone.image_url }}" alt="{{ drone.name }}"
-           onerror="this.parentElement.innerHTML='<div style=\'height:200px;display:flex;align-items:center;justify-content:center;background:var(--surface2);\'><i class=\'bi bi-drone\' style=\'font-size:3rem;color:var(--wine);opacity:0.4;\'></i></div>'"/>
-      {% else %}<div style="height:200px;display:flex;align-items:center;justify-content:center;background:var(--surface2);"><i class="bi bi-drone" style="font-size:3rem;color:var(--wine);opacity:0.4;"></i></div>{% endif %}
+      {% if drone.image %}
+        <img src="{{ drone.image.url }}" alt="{{ drone.name }}"/>
+      {% elif drone.image_url %}
+        <img src="{{ drone.image_url }}" alt="{{ drone.name }}"
+             onerror="this.parentElement.innerHTML='<div style=\'height:200px;display:flex;align-items:center;justify-content:center;background:var(--surface2);\'><i class=\'bi bi-drone\' style=\'font-size:3rem;color:var(--wine);opacity:0.4;\'></i></div>'"/>
+      {% else %}
+        <div style="height:200px;display:flex;align-items:center;justify-content:center;background:var(--surface2);">
+          <i class="bi bi-drone" style="font-size:3rem;color:var(--wine);opacity:0.4;"></i>
+        </div>
+      {% endif %}
       <div class="p-3">
         <div class="d-flex justify-content-between align-items-start mb-1">
           <h6 class="fw-bold mb-0" style="font-size:0.88rem;">{{ drone.name }}</h6>
-          {% if drone.category %}<span style="background:rgba(123,29,46,0.15);color:var(--wine-lite);border-radius:5px;padding:2px 7px;font-size:0.62rem;font-weight:600;">{{ drone.category }}</span>{% endif %}
+          {% if drone.category %}
+            <span style="background:rgba(123,29,46,0.15);color:var(--wine-lite);border-radius:5px;padding:2px 7px;font-size:0.62rem;font-weight:600;white-space:nowrap;">{{ drone.category }}</span>
+          {% endif %}
         </div>
         <div class="price-tag my-2">${{ drone.price }}</div>
         <div class="d-flex gap-1 mb-3 flex-wrap">
@@ -118,186 +238,48 @@
   {% endfor %}
 </div>
 {% endif %}
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// ── Realistic drone sound — repair card only ─────────────────────────────────
+// ── Video background handling ────────────────────────────────────────────────
 (function () {
-  const AC = window.AudioContext || window.webkitAudioContext;
-  if (!AC) return;
-  let ctx = null;
-  let droneNodes = [];
-  let droneRunning = false;
+  const video = document.getElementById('heroBg');
+  const wrap  = document.getElementById('heroVideoWrap');
+  const fallback = document.getElementById('heroFallback');
 
-  function getCtx() {
-    if (!ctx) ctx = new AC();
-    if (ctx.state === 'suspended') ctx.resume();
-    return ctx;
-  }
+  if (!video) return;
 
-  // Real drone sound model:
-  // 4 motors each ~80–100 Hz base, slightly detuned from each other
-  // Each motor = fundamental + harmonics (2x, 3x, 4x) = buzzy sawtooth character
-  // High-freq propeller blade-pass tone on top (~1800–2400 Hz)
-  // All wrapped in a slow amplitude envelope for spin-up / spin-down
+  // If video fails to load any source, show fallback gradient
+  video.addEventListener('error', () => {
+    wrap.style.display = 'none';
+    fallback.style.display = 'block';
+  });
 
-  function buildDroneSound() {
-    const c = getCtx();
-    const masterGain = c.createGain();
-    masterGain.gain.setValueAtTime(0, c.currentTime);
-    masterGain.connect(c.destination);
+  // If no sources loaded after 3s, show fallback
+  setTimeout(() => {
+    if (video.readyState === 0) {
+      wrap.style.display = 'none';
+      fallback.style.display = 'block';
+    }
+  }, 3000);
 
-    const nodes = [masterGain];
-
-    // 4 motor fundamentals — slightly detuned (real drones never perfectly sync)
-    const motorFreqs = [87, 91, 89, 93]; // Hz — typical small-to-mid drone
-    motorFreqs.forEach((baseFreq) => {
-      // Fundamental
-      const osc = c.createOscillator();
-      osc.type = 'sawtooth';
-      osc.frequency.value = baseFreq;
-      const g = c.createGain();
-      g.gain.value = 0.10;
-
-      // Low-pass to soften harsh sawtooth into motor hum
-      const lpf = c.createBiquadFilter();
-      lpf.type = 'lowpass';
-      lpf.frequency.value = 420;
-      lpf.Q.value = 0.8;
-
-      osc.connect(lpf); lpf.connect(g); g.connect(masterGain);
-      osc.start();
-      nodes.push(osc, g, lpf);
-
-      // 2nd harmonic (gives the "buzz")
-      const osc2 = c.createOscillator();
-      osc2.type = 'sine';
-      osc2.frequency.value = baseFreq * 2;
-      const g2 = c.createGain();
-      g2.gain.value = 0.04;
-      osc2.connect(g2); g2.connect(masterGain);
-      osc2.start();
-      nodes.push(osc2, g2);
-
-      // 3rd harmonic
-      const osc3 = c.createOscillator();
-      osc3.type = 'sine';
-      osc3.frequency.value = baseFreq * 3;
-      const g3 = c.createGain();
-      g3.gain.value = 0.02;
-      osc3.connect(g3); g3.connect(masterGain);
-      osc3.start();
-      nodes.push(osc3, g3);
-    });
-
-    // Propeller blade-pass frequency — high whine (~2000 Hz)
-    // Real drones: blade-pass = RPM/60 * num_blades * num_motors
-    const propOsc = c.createOscillator();
-    propOsc.type = 'sine';
-    propOsc.frequency.value = 2100;
-    // Slight vibrato to simulate real prop variation
-    const propLFO = c.createOscillator();
-    propLFO.type = 'sine';
-    propLFO.frequency.value = 6; // 6 Hz flutter
-    const propLFOGain = c.createGain();
-    propLFOGain.gain.value = 18; // ±18 Hz flutter depth
-    propLFO.connect(propLFOGain);
-    propLFOGain.connect(propOsc.frequency);
-    const propGain = c.createGain();
-    propGain.gain.value = 0.025;
-    const propHPF = c.createBiquadFilter();
-    propHPF.type = 'highpass';
-    propHPF.frequency.value = 1600;
-    propOsc.connect(propHPF); propHPF.connect(propGain); propGain.connect(masterGain);
-    propOsc.start(); propLFO.start();
-    nodes.push(propOsc, propLFO, propLFOGain, propGain, propHPF);
-
-    // Subtle air turbulence noise (bandpass filtered white noise)
-    const bufSize = c.sampleRate * 2;
-    const buf = c.createBuffer(1, bufSize, c.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
-    const noise = c.createBufferSource();
-    noise.buffer = buf;
-    noise.loop = true;
-    const noiseBPF = c.createBiquadFilter();
-    noiseBPF.type = 'bandpass';
-    noiseBPF.frequency.value = 350;
-    noiseBPF.Q.value = 0.4;
-    const noiseGain = c.createGain();
-    noiseGain.gain.value = 0.018;
-    noise.connect(noiseBPF); noiseBPF.connect(noiseGain); noiseGain.connect(masterGain);
-    noise.start();
-    nodes.push(noise, noiseBPF, noiseGain);
-
-    return { masterGain, nodes };
-  }
-
-  function spinUp(drone) {
-    const c = getCtx();
-    const now = c.currentTime;
-    // Ramp gain from 0 → 0.55 over 0.8s (realistic spin-up)
-    drone.masterGain.gain.cancelScheduledValues(now);
-    drone.masterGain.gain.setValueAtTime(drone.masterGain.gain.value, now);
-    drone.masterGain.gain.linearRampToValueAtTime(0.55, now + 0.8);
-  }
-
-  function spinDown(drone) {
-    const c = getCtx();
-    const now = c.currentTime;
-    // Ramp gain → 0 over 1.2s (motors coast down)
-    drone.masterGain.gain.cancelScheduledValues(now);
-    drone.masterGain.gain.setValueAtTime(drone.masterGain.gain.value, now);
-    drone.masterGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
-    // Stop all nodes after fade
-    setTimeout(() => {
-      drone.nodes.forEach(n => {
-        try { if (n.stop) n.stop(); if (n.disconnect) n.disconnect(); } catch(e) {}
-      });
-      droneRunning = false;
-      droneNodes = [];
-    }, 1400);
-  }
-
-  // Attach only to the repair card
-  document.addEventListener('DOMContentLoaded', () => {
-    const repairCard = document.querySelector('.drone-sound-card[data-sound="repair"]');
-    if (!repairCard) return;
-
-    repairCard.addEventListener('mouseenter', () => {
-      if (droneRunning) return;
-      droneRunning = true;
-      const drone = buildDroneSound();
-      droneNodes = drone.nodes;
-      droneNodes._drone = drone;
-      spinUp(drone);
-      repairCard._drone = drone;
-    }, { passive: true });
-
-    repairCard.addEventListener('mouseleave', () => {
-      if (repairCard._drone) {
-        spinDown(repairCard._drone);
-        repairCard._drone = null;
-      }
-    }, { passive: true });
-
-    // Mobile: touchstart / touchend
-    repairCard.addEventListener('touchstart', () => {
-      if (droneRunning) return;
-      droneRunning = true;
-      const drone = buildDroneSound();
-      repairCard._drone = drone;
-      spinUp(drone);
-    }, { passive: true });
-
-    repairCard.addEventListener('touchend', () => {
-      if (repairCard._drone) {
-        spinDown(repairCard._drone);
-        repairCard._drone = null;
-      }
-    }, { passive: true });
+  // Smooth fade-in once video starts playing
+  video.style.opacity = '0';
+  video.style.transition = 'opacity 1.2s ease';
+  video.addEventListener('playing', () => {
+    video.style.opacity = '1';
   });
 })();
+
+// ── Mute toggle ──────────────────────────────────────────────────────────────
+function toggleVideoMute() {
+  const video = document.getElementById('heroBg');
+  const icon  = document.getElementById('muteIcon');
+  if (!video) return;
+  video.muted = !video.muted;
+  icon.className = video.muted ? 'bi bi-volume-mute-fill' : 'bi bi-volume-up-fill';
+}
 </script>
 {% endblock %}
