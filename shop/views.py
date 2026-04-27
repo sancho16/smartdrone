@@ -4,7 +4,13 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
-import torch
+
+# PyTorch is optional — used for tensor ops in charts when available
+try:
+    import torch
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -201,8 +207,8 @@ def admin_dashboard(request):
     if orders_by_drone:
         labels = [o['drone__name'] for o in orders_by_drone]
         values = [float(o['total']) for o in orders_by_drone]
-        t_values = torch.tensor(values, dtype=torch.float32)
-        t_normalized = (t_values / t_values.sum() * 100).tolist()
+        t_values = torch.tensor(values, dtype=torch.float32) if TORCH_AVAILABLE else np.array(values, dtype=np.float32)
+        t_normalized = (t_values / t_values.sum() * 100).tolist() if TORCH_AVAILABLE else (t_values / t_values.sum() * 100).tolist()
 
         fig, ax = plt.subplots(figsize=(7, 4), facecolor='#0a0608')
         ax.set_facecolor('#110a0d')
@@ -227,10 +233,15 @@ def admin_dashboard(request):
         c = Order.objects.filter(created_at__date=d).count()
         counts.append(c)
 
-    t_counts = torch.tensor(counts, dtype=torch.float32)
-    smooth = torch.nn.functional.avg_pool1d(
-        t_counts.unsqueeze(0).unsqueeze(0), kernel_size=3, stride=1, padding=1
-    ).squeeze().tolist()
+    t_counts = torch.tensor(counts, dtype=torch.float32) if TORCH_AVAILABLE else np.array(counts, dtype=np.float32)
+    if TORCH_AVAILABLE:
+        smooth = torch.nn.functional.avg_pool1d(
+            t_counts.unsqueeze(0).unsqueeze(0), kernel_size=3, stride=1, padding=1
+        ).squeeze().tolist()
+    else:
+        # simple 3-point moving average with numpy
+        kernel = np.ones(3) / 3
+        smooth = np.convolve(t_counts, kernel, mode='same').tolist()
 
     fig2, ax2 = plt.subplots(figsize=(7, 4), facecolor='#0a0608')
     ax2.set_facecolor('#110a0d')
@@ -253,7 +264,7 @@ def admin_dashboard(request):
     if repair_by_type:
         r_labels = [r['device_type'].capitalize() for r in repair_by_type]
         r_values = [r['count'] for r in repair_by_type]
-        t_r = torch.tensor(r_values, dtype=torch.float32)
+        t_r = torch.tensor(r_values, dtype=torch.float32) if TORCH_AVAILABLE else np.array(r_values, dtype=np.float32)
         colors_pie = ['#7b1d2e', '#c9a84c', '#9b2335', '#8a6e2f']
         fig3, ax3 = plt.subplots(figsize=(5, 4), facecolor='#0a0608')
         ax3.set_facecolor('#0a0608')
@@ -278,7 +289,7 @@ def admin_dashboard(request):
     if repair_by_status:
         s_labels = [r['status'].replace('_', ' ').title() for r in repair_by_status]
         s_values = [r['count'] for r in repair_by_status]
-        t_s = torch.tensor(s_values, dtype=torch.float32)
+        t_s = torch.tensor(s_values, dtype=torch.float32) if TORCH_AVAILABLE else np.array(s_values, dtype=np.float32)
         fig4, ax4 = plt.subplots(figsize=(6, 4), facecolor='#0a0608')
         ax4.set_facecolor('#110a0d')
         bar_colors = ['#7b1d2e', '#c9a84c', '#9b2335', '#8a6e2f', '#c0394d', '#5a3030']
