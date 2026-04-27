@@ -1,0 +1,132 @@
+{% extends 'shop/base.html' %}
+{% load i18n_tags %}
+{% block title %}{% t 'dashboard_title' %} – SmartDrone{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h2 class="section-title mb-0"><i class="bi bi-speedometer2 me-2"></i>{% t 'dashboard_title' %}</h2>
+  <a href="{% url 'admin_repairs' %}" class="btn btn-outline-gold btn-sm"><i class="bi bi-tools me-1"></i>{% t 'manage_repairs' %}</a>
+</div>
+
+<!-- KPIs -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <i class="bi bi-drone fs-2 mb-1" style="color:var(--wine-lite);"></i>
+      <div class="fs-3 fw-bold">{{ total_drones }}</div>
+      <div style="color:var(--text-muted);font-size:0.8rem;">{% t 'drones_listed' %}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <i class="bi bi-bag-check fs-2 mb-1" style="color:var(--gold);"></i>
+      <div class="fs-3 fw-bold">{{ total_orders }}</div>
+      <div style="color:var(--text-muted);font-size:0.8rem;">{% t 'total_orders' %}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <i class="bi bi-currency-dollar fs-2 mb-1" style="color:var(--gold-lite);"></i>
+      <div class="fs-3 fw-bold">${{ total_revenue|floatformat:0 }}</div>
+      <div style="color:var(--text-muted);font-size:0.8rem;">{% t 'total_revenue' %}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <i class="bi bi-tools fs-2 mb-1" style="color:var(--wine-lite);"></i>
+      <div class="fs-3 fw-bold">{{ total_repairs }}</div>
+      <div style="color:var(--text-muted);font-size:0.8rem;">{% t 'repair_requests' %}</div>
+      {% if pending_repairs %}<span class="s-received mt-1 d-inline-block">{{ pending_repairs }} {% t 'pending_lbl' %}</span>{% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Charts row 1 -->
+<div class="row g-4 mb-4">
+  {% if chart_sales %}
+  <div class="col-lg-7">
+    <div class="card p-3">
+      <h6 class="fw-bold mb-3" style="color:var(--gold);"><i class="bi bi-bar-chart me-2"></i>{% t 'svc_sales_title' %}</h6>
+      <img src="data:image/png;base64,{{ chart_sales }}" class="img-fluid rounded" alt="Sales chart"/>
+    </div>
+  </div>
+  {% endif %}
+  <div class="col-lg-5">
+    <div class="card p-3">
+      <h6 class="fw-bold mb-3" style="color:var(--gold);"><i class="bi bi-graph-up me-2"></i>{% t 'total_orders' %}</h6>
+      <img src="data:image/png;base64,{{ chart_orders }}" class="img-fluid rounded" alt="Orders chart"/>
+    </div>
+  </div>
+</div>
+
+<!-- Charts row 2 -->
+<div class="row g-4 mb-4">
+  {% if chart_repairs_type %}
+  <div class="col-lg-5">
+    <div class="card p-3">
+      <h6 class="fw-bold mb-3" style="color:var(--gold);"><i class="bi bi-pie-chart me-2"></i>{% t 'repair_requests' %}</h6>
+      <img src="data:image/png;base64,{{ chart_repairs_type }}" class="img-fluid rounded" alt="Repairs by device"/>
+    </div>
+  </div>
+  {% endif %}
+  {% if chart_repairs_status %}
+  <div class="col-lg-7">
+    <div class="card p-3">
+      <h6 class="fw-bold mb-3" style="color:var(--gold);"><i class="bi bi-bar-chart-steps me-2"></i>{% t 'col_status' %}</h6>
+      <img src="data:image/png;base64,{{ chart_repairs_status }}" class="img-fluid rounded" alt="Repairs by status"/>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Tables -->
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h6 class="fw-bold mb-3" style="color:var(--gold);"><i class="bi bi-bag me-2"></i>{% t 'recent_orders' %}</h6>
+      {% if recent_orders %}
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th>#</th><th>{% t 'col_user' %}</th><th>{% t 'col_drone' %}</th><th>{% t 'col_total' %}</th><th>{% t 'col_status' %}</th></tr></thead>
+          <tbody>
+            {% for o in recent_orders %}
+            <tr>
+              <td style="color:var(--text-muted);">{{ o.id }}</td>
+              <td>{{ o.user.username }}</td>
+              <td>{{ o.drone.name }}</td>
+              <td class="price-tag" style="font-size:0.9rem;">${{ o.total_price }}</td>
+              <td><span class="s-received" style="font-size:0.7rem;">{{ o.get_status_display }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p style="color:var(--text-muted);font-size:0.85rem;">{% t 'no_orders_yet' %}</p>{% endif %}
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-bold mb-0" style="color:var(--gold);"><i class="bi bi-tools me-2"></i>{% t 'recent_repairs' %}</h6>
+        <a href="{% url 'admin_repairs' %}" class="btn btn-outline-gold btn-sm" style="font-size:0.75rem;">{% t 'manage_all' %}</a>
+      </div>
+      {% if recent_repairs %}
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th>#</th><th>{% t 'customer_lbl' %}</th><th>{% t 'device_lbl' %}</th><th>{% t 'col_status' %}</th></tr></thead>
+          <tbody>
+            {% for r in recent_repairs %}
+            <tr>
+              <td style="color:var(--text-muted);">{{ r.id }}</td>
+              <td>{{ r.full_name }}</td>
+              <td>{{ r.get_device_type_display }}</td>
+              <td><span class="s-{{ r.status }}" style="font-size:0.7rem;">{{ r.get_status_display }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p style="color:var(--text-muted);font-size:0.85rem;">{% t 'no_repairs_yet' %}</p>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'shop/base.html' %}
+{% load static i18n_tags %}
+{% block title %}{% t 'nav_login' %} – SmartDrone{% endblock %}
+{% block extra_css %}
+<style>
+  .auth-wrap { background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:2.5rem; }
+  .gold-line { height:2px; background:linear-gradient(90deg,transparent,var(--gold-dim),var(--gold-lite),var(--gold-dim),transparent); margin:1.5rem 0; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-sm-10 col-md-6 col-lg-4">
+    <div class="auth-wrap text-center">
+      <img src="{% static 'logo.jpg' %}" alt="SmartDrone" height="64" style="border-radius:12px;border:1px solid var(--border-gold);margin-bottom:1rem;"/>
+      <h3 class="fw-bold mb-1" style="letter-spacing:-0.5px;">{% t 'welcome_back' %}</h3>
+      <p style="color:var(--text-muted);font-size:0.88rem;" class="mb-0">{% t 'sign_in_sub' %}</p>
+      <div class="gold-line"></div>
+      <form method="post" class="text-start">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">{% t 'username_lbl' %}</label>
+          <input type="text" name="username" class="form-control" required autofocus/>
+        </div>
+        <div class="mb-4">
+          <label class="form-label">{% t 'password_lbl' %}</label>
+          <input type="password" name="password" class="form-control" required placeholder="••••••••"/>
+        </div>
+        <button type="submit" class="btn btn-accent w-100 fw-bold py-2 mb-3">{% t 'sign_in_btn' %}</button>
+      </form>
+      <p style="color:var(--text-muted);font-size:0.83rem;" class="mb-2">
+        {% t 'no_account' %} <a href="{% url 'register' %}" style="color:var(--gold);font-weight:600;">{% t 'create_one' %}</a>
+      </p>
+      <p style="color:var(--text-muted);font-size:0.72rem;" class="mb-0">
+        Demo: <code style="color:var(--gold-lite);">admin / admin123</code>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

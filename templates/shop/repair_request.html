@@ -1,0 +1,94 @@
+{% extends 'shop/base.html' %}
+{% load i18n_tags %}
+{% block title %}{% t 'repair_req_title' %} – SmartDrone{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card p-4">
+      <h2 class="section-title mb-1"><i class="bi bi-clipboard-plus me-2"></i>{% t 'repair_req_title' %}</h2>
+      <p style="color:var(--text-muted);font-size:0.88rem;" class="mb-4">{% t 'repair_req_sub' %}</p>
+      <form method="post">
+        {% csrf_token %}
+        <h6 class="fw-bold mb-3" style="color:var(--gold);">{% t 'your_details' %}</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">{% t 'full_name_lbl' %} *</label>
+            <input type="text" name="full_name" class="form-control" value="{{ post.full_name|default:'' }}" required/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{% t 'email_lbl' %} *</label>
+            <input type="email" name="email" class="form-control" value="{{ post.email|default:'' }}" required/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{% t 'phone_lbl' %}</label>
+            <input type="tel" name="phone" class="form-control" value="{{ post.phone|default:'' }}"/>
+          </div>
+        </div>
+        <h6 class="fw-bold mb-3" style="color:var(--gold);">{% t 'device_info' %}</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">{% t 'device_type_lbl' %} *</label>
+            <select name="device_type" class="form-select">
+              <option value="drone">{% t 'opt_drone' %}</option>
+              <option value="camera">{% t 'opt_camera' %}</option>
+              <option value="other">{% t 'opt_other' %}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{% t 'brand_model_lbl' %} *</label>
+            <input type="text" name="brand_model" class="form-control" placeholder="e.g. DJI Mini 4 Pro" value="{{ post.brand_model|default:'' }}" required/>
+          </div>
+          <div class="col-12">
+            <label class="form-label">{% t 'issue_lbl' %} *</label>
+            <textarea name="issue_description" rows="4" class="form-control" placeholder="{% t 'issue_ph' %}" required>{{ post.issue_description|default:'' }}</textarea>
+          </div>
+        </div>
+        <h6 class="fw-bold mb-3" style="color:var(--gold);">{% t 'service_speed' %}</h6>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <label style="cursor:pointer;width:100%;">
+              <input type="radio" name="urgency" value="standard" checked class="d-none"/>
+              <div class="card p-3 text-center urgency-opt">
+                <i class="bi bi-clock mb-1" style="color:var(--text-muted);"></i>
+                <div class="fw-bold small">{% t 'standard_lbl' %}</div>
+                <div style="font-size:0.72rem;color:var(--text-muted);">{% t 'std_days' %}</div>
+              </div>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label style="cursor:pointer;width:100%;">
+              <input type="radio" name="urgency" value="express" class="d-none"/>
+              <div class="card p-3 text-center urgency-opt">
+                <i class="bi bi-lightning-charge mb-1" style="color:var(--gold);"></i>
+                <div class="fw-bold small">{% t 'express_lbl' %}</div>
+                <div style="font-size:0.72rem;color:var(--text-muted);">{% t 'exp_days' %}</div>
+              </div>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label style="cursor:pointer;width:100%;">
+              <input type="radio" name="urgency" value="urgent" class="d-none"/>
+              <div class="card p-3 text-center urgency-opt">
+                <i class="bi bi-rocket-takeoff mb-1" style="color:var(--wine-lite);"></i>
+                <div class="fw-bold small">{% t 'urgent_lbl' %}</div>
+                <div style="font-size:0.72rem;color:var(--text-muted);">{% t 'urg_days' %}</div>
+              </div>
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-accent w-100 py-2 fw-bold">
+          <i class="bi bi-send me-2"></i>{% t 'submit_repair' %}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelectorAll('input[name="urgency"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.querySelectorAll('.urgency-opt').forEach(c => c.style.borderColor = '');
+    if (r.checked) r.closest('label').querySelector('.urgency-opt').style.borderColor = 'var(--gold)';
+  });
+});
+</script>
+{% endblock %}

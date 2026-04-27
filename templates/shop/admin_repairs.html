@@ -1,0 +1,67 @@
+{% extends 'shop/base.html' %}
+{% load i18n_tags %}
+{% block title %}{% t 'admin_repairs_title' %} – SmartDrone{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h2 class="section-title mb-0"><i class="bi bi-tools me-2"></i>{% t 'admin_repairs_title' %}</h2>
+  <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-gold btn-sm">{% t 'back_dashboard' %}</a>
+</div>
+
+{% for r in repairs %}
+<div class="card mb-3 p-3">
+  <div class="row g-3 align-items-start">
+    <div class="col-md-4">
+      <div class="d-flex justify-content-between align-items-start mb-1">
+        <h6 class="fw-bold mb-0">#{{ r.id }} – {{ r.brand_model }}</h6>
+        <span class="s-{{ r.status }}" style="font-size:0.72rem;">{{ r.get_status_display }}</span>
+      </div>
+      <p class="mb-1"><strong>{{ r.full_name }}</strong> · <span style="color:var(--text-muted);font-size:0.82rem;">{{ r.email }}</span></p>
+      <p style="color:var(--text-muted);font-size:0.8rem;" class="mb-1">
+        <i class="bi bi-{% if r.device_type == 'drone' %}drone{% else %}camera-video{% endif %} me-1" style="color:var(--gold);"></i>
+        {{ r.get_device_type_display }} · {{ r.get_urgency_display }}
+      </p>
+      <p style="color:var(--text-muted);font-size:0.75rem;" class="mb-1">{{ r.created_at|date:"d M Y H:i" }}</p>
+      <p class="small mb-0" style="color:var(--text-muted);">{{ r.issue_description|truncatechars:100 }}</p>
+    </div>
+    <div class="col-md-8">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="repair_id" value="{{ r.id }}"/>
+        <div class="row g-2">
+          <div class="col-md-4">
+            <label class="form-label">{% t 'col_status' %}</label>
+            <select name="status" class="form-select form-select-sm">
+              {% for val, label in r.STATUS_CHOICES %}
+              <option value="{{ val }}" {% if r.status == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{% t 'est_cost_field' %}</label>
+            <input type="number" name="estimated_cost" step="0.01" min="0"
+                   value="{{ r.estimated_cost|default:'' }}" class="form-control form-control-sm"/>
+          </div>
+          <div class="col-12">
+            <label class="form-label">{% t 'tech_notes_field' %}</label>
+            <textarea name="technician_notes" rows="2" class="form-control form-control-sm">{{ r.technician_notes }}</textarea>
+          </div>
+          <div class="col-12 d-flex gap-2">
+            <button type="submit" class="btn btn-accent btn-sm px-4">
+              <i class="bi bi-save me-1"></i>{% t 'update_btn' %}
+            </button>
+            <a href="{% url 'repair_tracking' r.pk %}" class="btn btn-outline-gold btn-sm" target="_blank">
+              <i class="bi bi-eye me-1"></i>{% t 'view_btn' %}
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% empty %}
+<div class="text-center py-5">
+  <i class="bi bi-tools" style="font-size:4rem;color:var(--wine);opacity:0.3;"></i>
+  <p style="color:var(--text-muted);" class="mt-3">{% t 'no_repair_req' %}</p>
+</div>
+{% endfor %}
+{% endblock %}

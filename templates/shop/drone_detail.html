@@ -1,0 +1,78 @@
+{% extends 'shop/base.html' %}
+{% load static i18n_tags %}
+{% block title %}{{ drone.name }} – SmartDrone{% endblock %}
+{% block extra_css %}
+<style>
+  .detail-img { width:100%;height:380px;object-fit:cover;border-radius:20px;border:1px solid var(--border); }
+  .spec-card { background:var(--surface2);border:1px solid var(--border-gold);border-radius:14px;padding:1rem;text-align:center; }
+  .spec-val { font-size:1rem;font-weight:700; }
+  .spec-lbl { font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px; }
+  .price-big { font-size:2.5rem;font-weight:900;background:linear-gradient(135deg,var(--gold-lite),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+  .qty-input { width:80px;text-align:center;font-weight:700; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="mb-3">
+  <a href="{% url 'drone_list' %}" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;">{% t 'back_drones' %}</a>
+</div>
+<div class="row g-5">
+  <div class="col-md-5">
+    {% if drone.image %}<img src="{{ drone.image.url }}" class="detail-img" alt="{{ drone.name }}"/>
+    {% elif drone.image_url %}<img src="{{ drone.image_url }}" class="detail-img" alt="{{ drone.name }}"
+         onerror="this.src='https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=600&q=80'"/>
+    {% else %}<div class="detail-img d-flex align-items-center justify-content-center" style="background:var(--surface2);">
+      <i class="bi bi-drone" style="font-size:6rem;color:var(--wine);opacity:0.3;"></i></div>{% endif %}
+  </div>
+  <div class="col-md-7">
+    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+      {% if drone.category %}<span style="background:rgba(123,29,46,0.15);color:var(--wine-lite);border-radius:6px;padding:3px 10px;font-size:0.78rem;font-weight:600;">{{ drone.category }}</span>{% endif %}
+      {% if drone.available %}<span style="background:rgba(0,160,80,0.1);color:#00a850;border:1px solid rgba(0,160,80,0.25);border-radius:6px;padding:3px 10px;font-size:0.78rem;font-weight:600;">{% t 'in_stock_badge' %}</span>
+      {% else %}<span class="s-cancelled">{% t 'out_of_stock' %}</span>{% endif %}
+    </div>
+    <h1 class="fw-bold mb-1" style="font-size:2rem;letter-spacing:-0.5px;">{{ drone.name }}</h1>
+    <div class="price-big mb-3">${{ drone.price }}</div>
+    <p style="color:var(--text-muted);line-height:1.7;" class="mb-4">{{ drone.description }}</p>
+    <div class="row g-2 mb-4">
+      {% if drone.flight_time_min %}
+      <div class="col-3"><div class="spec-card">
+        <i class="bi bi-clock mb-1 d-block" style="color:var(--wine-lite);font-size:1.3rem;"></i>
+        <div class="spec-val">{{ drone.flight_time_min }}m</div><div class="spec-lbl">{% t 'flight_time' %}</div>
+      </div></div>{% endif %}
+      {% if drone.range_km %}
+      <div class="col-3"><div class="spec-card">
+        <i class="bi bi-broadcast mb-1 d-block" style="color:var(--gold);font-size:1.3rem;"></i>
+        <div class="spec-val">{{ drone.range_km }}km</div><div class="spec-lbl">{% t 'range_lbl' %}</div>
+      </div></div>{% endif %}
+      {% if drone.weight_kg %}
+      <div class="col-3"><div class="spec-card">
+        <i class="bi bi-feather mb-1 d-block" style="color:var(--gold-lite);font-size:1.3rem;"></i>
+        <div class="spec-val">{{ drone.weight_kg }}kg</div><div class="spec-lbl">{% t 'weight_lbl' %}</div>
+      </div></div>{% endif %}
+      <div class="col-3"><div class="spec-card">
+        <i class="bi bi-box-seam mb-1 d-block" style="color:var(--wine-lite);font-size:1.3rem;"></i>
+        <div class="spec-val">{{ drone.stock }}</div><div class="spec-lbl">{% t 'stock_lbl' %}</div>
+      </div></div>
+    </div>
+    {% if drone.stock > 0 %}
+      {% if user.is_authenticated %}
+      <form method="post" action="{% url 'buy_drone' drone.pk %}" class="d-flex gap-3 align-items-center mb-3">
+        {% csrf_token %}
+        <input type="number" name="quantity" value="1" min="1" max="{{ drone.stock }}" class="form-control qty-input"/>
+        <button type="submit" class="btn btn-accent btn-lg px-5 fw-bold flex-grow-1">
+          <i class="bi bi-cart-plus me-2"></i>{% t 'buy_now' %}
+        </button>
+      </form>
+      {% else %}
+      <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-accent btn-lg px-5 w-100 mb-3">
+        <i class="bi bi-lock me-2"></i>{% t 'login_to_buy' %}
+      </a>
+      {% endif %}
+    {% else %}
+      <button class="btn btn-secondary btn-lg w-100 mb-3" disabled>{% t 'out_of_stock' %}</button>
+    {% endif %}
+    <a href="{% url 'repair_request' %}" class="btn btn-outline-accent btn-sm px-4">
+      <i class="bi bi-tools me-1"></i>{% t 'need_repair' %}
+    </a>
+  </div>
+</div>
+{% endblock %}

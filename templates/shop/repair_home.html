@@ -1,0 +1,71 @@
+{% extends 'shop/base.html' %}
+{% load i18n_tags %}
+{% block title %}{% t 'repair_title' %} – SmartDrone{% endblock %}
+{% block content %}
+<div class="text-center py-5 mb-4" style="background:linear-gradient(135deg,var(--surface),var(--surface2));border-radius:20px;border:1px solid var(--border);">
+  <i class="bi bi-tools mb-2 d-block" style="font-size:3rem;color:var(--gold);"></i>
+  <h1 class="fw-bold" style="background:linear-gradient(135deg,var(--wine-lite),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">{% t 'repair_title' %}</h1>
+  <p class="lead mb-4" style="color:var(--text-muted);">{% t 'repair_sub' %}</p>
+  <a href="{% url 'repair_request' %}" class="btn btn-accent btn-lg px-5">
+    <i class="bi bi-clipboard-plus me-2"></i>{% t 'repair_cta' %}
+  </a>
+</div>
+
+<div class="row g-4 mb-5">
+  <div class="col-md-6">
+    <div class="card h-100 p-4">
+      <h4 class="fw-bold mb-3" style="color:var(--wine-lite);"><i class="bi bi-drone me-2"></i>{% t 'svc_drone_title' %}</h4>
+      <ul class="list-unstyled">
+        {% t_list 'drone_repair_items' as items %}
+        {% for item in items %}
+        <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color:var(--gold);"></i>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card h-100 p-4">
+      <h4 class="fw-bold mb-3" style="color:var(--wine-lite);"><i class="bi bi-camera-video me-2"></i>{% t 'svc_cam_title' %}</h4>
+      <ul class="list-unstyled">
+        {% t_list 'camera_repair_items' as items %}
+        {% for item in items %}
+        <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color:var(--gold);"></i>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<h3 class="section-title mb-3">{% t 'turnaround' %}</h3>
+<div class="row g-3 mb-5">
+  <div class="col-md-4">
+    <div class="card text-center p-3">
+      <i class="bi bi-clock fs-2 mb-2" style="color:var(--text-muted);"></i>
+      <h5 class="fw-bold">{% t 'standard_lbl' %}</h5>
+      <p style="color:var(--text-muted);" class="mb-1">{% t 'std_days' %}</p>
+      <span style="background:rgba(123,29,46,0.15);color:var(--wine-lite);border-radius:6px;padding:3px 10px;font-size:0.75rem;font-weight:600;">{% t 'most_affordable' %}</span>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center p-3">
+      <i class="bi bi-lightning-charge fs-2 mb-2" style="color:var(--gold);"></i>
+      <h5 class="fw-bold">{% t 'express_lbl' %}</h5>
+      <p style="color:var(--text-muted);" class="mb-1">{% t 'exp_days' %}</p>
+      <span style="background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid var(--border-gold);border-radius:6px;padding:3px 10px;font-size:0.75rem;font-weight:600;">{% t 'faster_turn' %}</span>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center p-3">
+      <i class="bi bi-rocket-takeoff fs-2 mb-2" style="color:var(--wine-lite);"></i>
+      <h5 class="fw-bold">{% t 'urgent_lbl' %}</h5>
+      <p style="color:var(--text-muted);" class="mb-1">{% t 'urg_days' %}</p>
+      <span style="background:rgba(123,29,46,0.15);color:var(--wine-lite);border-radius:6px;padding:3px 10px;font-size:0.75rem;font-weight:600;">{% t 'priority_svc' %}</span>
+    </div>
+  </div>
+</div>
+<div class="text-center">
+  <a href="{% url 'repair_request' %}" class="btn btn-accent btn-lg px-5">
+    <i class="bi bi-clipboard-plus me-2"></i>{% t 'start_repair_btn' %}
+  </a>
+</div>
+{% endblock %}

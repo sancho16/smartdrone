@@ -1,0 +1,33 @@
+{% extends 'shop/base.html' %}
+{% load i18n_tags %}
+{% block title %}{% t 'my_repairs_title' %} – SmartDrone{% endblock %}
+{% block content %}
+<h2 class="section-title mb-4"><i class="bi bi-clipboard-check me-2"></i>{% t 'my_repairs_title' %}</h2>
+{% if repairs %}
+<div class="row g-3">
+  {% for r in repairs %}
+  <div class="col-md-6">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <h6 class="fw-bold mb-0">#{{ r.id }} – {{ r.brand_model }}</h6>
+        <span class="s-{{ r.status }}">{{ r.get_status_display }}</span>
+      </div>
+      <p style="color:var(--text-muted);font-size:0.82rem;" class="mb-1">
+        <i class="bi bi-{% if r.device_type == 'drone' %}drone{% else %}camera-video{% endif %} me-1" style="color:var(--gold);"></i>
+        {{ r.get_device_type_display }} · {{ r.get_urgency_display }}
+      </p>
+      <p style="color:var(--text-muted);font-size:0.78rem;" class="mb-2">{{ r.created_at|date:"d M Y" }}</p>
+      {% if r.estimated_cost %}<p class="mb-2">{% t 'estimated_lbl' %} <strong class="price-tag" style="font-size:1rem;">${{ r.estimated_cost }}</strong></p>{% endif %}
+      <a href="{% url 'repair_tracking' r.pk %}" class="btn btn-outline-accent btn-sm">{% t 'track_repair_btn' %}</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+  <i class="bi bi-tools" style="font-size:4rem;color:var(--wine);opacity:0.3;"></i>
+  <p style="color:var(--text-muted);" class="mt-3">{% t 'no_repairs' %}</p>
+  <a href="{% url 'repair_request' %}" class="btn btn-accent">{% t 'submit_repair_btn' %}</a>
+</div>
+{% endif %}
+{% endblock %}

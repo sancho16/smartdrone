@@ -1,0 +1,114 @@
+{% extends 'shop/base.html' %}
+{% load static i18n_tags %}
+{% block title %}SmartDrone{% endblock %}
+{% block extra_css %}
+<style>
+  .hero { position:relative; overflow:hidden; border-radius:24px; padding:80px 48px;
+    background:linear-gradient(135deg, var(--bg) 0%, var(--surface2) 50%, var(--bg) 100%);
+    border:1px solid var(--border); }
+  .hero::before { content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse at 65% 50%, rgba(123,29,46,0.15) 0%, transparent 60%),
+               radial-gradient(ellipse at 10% 80%, rgba(201,168,76,0.06) 0%, transparent 45%); }
+  .hero::after { content:''; position:absolute; top:0; right:0; width:220px; height:220px;
+    background:radial-gradient(circle at top right, rgba(201,168,76,0.1), transparent 70%); pointer-events:none; }
+  .hero-content { position:relative; z-index:1; max-width:56%; }
+  .hero-badge { display:inline-flex; align-items:center; gap:6px;
+    background:rgba(201,168,76,0.1); border:1px solid var(--border-gold);
+    border-radius:50px; padding:5px 16px; font-size:0.78rem; font-weight:600;
+    color:var(--gold); margin-bottom:1.5rem; letter-spacing:0.3px; }
+  .hero h1 { font-size:clamp(2.2rem,5.5vw,4rem); font-weight:900; line-height:1.05;
+    letter-spacing:-2px; margin-bottom:1.5rem; color:var(--text); }
+  .hero h1 .accent-word { background:linear-gradient(135deg, var(--wine-lite), var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .hero-drone-img { position:absolute; right:-10px; top:50%; transform:translateY(-50%);
+    width:42%; max-width:480px; opacity:0.88;
+    filter:drop-shadow(0 0 50px rgba(123,29,46,0.4)) drop-shadow(0 0 20px rgba(201,168,76,0.15)); }
+  .service-card { background:var(--surface); border:1px solid var(--border); border-radius:20px;
+    padding:2rem; transition:all 0.3s; }
+  .service-card:hover { border-color:var(--gold-dim); transform:translateY(-4px);
+    box-shadow:0 14px 40px var(--shadow), 0 0 0 1px rgba(201,168,76,0.08); }
+  .service-icon { width:52px; height:52px; border-radius:13px;
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin-bottom:1rem; }
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="hero mb-5 fade-up">
+  <div class="hero-content">
+    <div class="hero-badge"><i class="bi bi-stars"></i> {% t 'hero_badge' %}</div>
+    <h1>{% t 'hero_h1a' %}<br/><span class="accent-word">{% t 'hero_h1b' %}</span></h1>
+    <p class="lead mb-4" style="color:var(--text-muted);font-size:1.05rem;max-width:460px;line-height:1.7;">{% t 'hero_sub' %}</p>
+    <div class="d-flex gap-3 flex-wrap">
+      <a href="{% url 'drone_list' %}" class="btn btn-accent btn-lg px-5 py-3"><i class="bi bi-drone me-2"></i>{% t 'hero_btn_shop' %}</a>
+      <a href="{% url 'repair_home' %}" class="btn btn-gold btn-lg px-5 py-3"><i class="bi bi-tools me-2"></i>{% t 'hero_btn_repair' %}</a>
+    </div>
+    <div class="d-flex gap-3 mt-4 flex-wrap">
+      <span class="stat-chip"><i class="bi bi-drone"></i> {% t 'chip_models' %}</span>
+      <span class="stat-chip"><i class="bi bi-tools"></i> {% t 'chip_techs' %}</span>
+      <span class="stat-chip"><i class="bi bi-lightning-charge"></i> {% t 'chip_urgent' %}</span>
+    </div>
+  </div>
+  <img src="https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=700&q=85"
+       class="hero-drone-img d-none d-lg-block" alt="Drone"/>
+</div>
+
+<div class="row g-4 mb-5">
+  <div class="col-md-4">
+    <div class="service-card h-100">
+      <div class="service-icon" style="background:rgba(123,29,46,0.15);"><i class="bi bi-drone" style="color:var(--wine-lite);"></i></div>
+      <h5 class="fw-bold mb-2">{% t 'svc_sales_title' %}</h5>
+      <p style="color:var(--text-muted);font-size:0.88rem;" class="mb-3">{% t 'svc_sales_desc' %}</p>
+      <a href="{% url 'drone_list' %}" class="btn btn-accent btn-sm px-4">{% t 'svc_sales_btn' %}</a>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="service-card h-100">
+      <div class="service-icon" style="background:rgba(201,168,76,0.1);"><i class="bi bi-tools" style="color:var(--gold);"></i></div>
+      <h5 class="fw-bold mb-2">{% t 'svc_drone_title' %}</h5>
+      <p style="color:var(--text-muted);font-size:0.88rem;" class="mb-3">{% t 'svc_drone_desc' %}</p>
+      <a href="{% url 'repair_request' %}" class="btn btn-gold btn-sm px-4">{% t 'svc_drone_btn' %}</a>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="service-card h-100">
+      <div class="service-icon" style="background:rgba(123,29,46,0.1);"><i class="bi bi-camera-video" style="color:var(--wine-lite);"></i></div>
+      <h5 class="fw-bold mb-2">{% t 'svc_cam_title' %}</h5>
+      <p style="color:var(--text-muted);font-size:0.88rem;" class="mb-3">{% t 'svc_cam_desc' %}</p>
+      <a href="{% url 'repair_request' %}" class="btn btn-outline-accent btn-sm px-4">{% t 'svc_cam_btn' %}</a>
+    </div>
+  </div>
+</div>
+
+<div class="glow-line"></div>
+
+{% if drones %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="section-title mb-0">{% t 'featured_title' %}</h2>
+  <a href="{% url 'drone_list' %}" class="btn btn-outline-gold btn-sm px-4">{% t 'view_all' %}</a>
+</div>
+<div class="row g-4">
+  {% for drone in drones %}
+  <div class="col-6 col-md-4 col-lg-3">
+    <div class="drone-card h-100">
+      {% if drone.image %}<img src="{{ drone.image.url }}" alt="{{ drone.name }}"/>
+      {% elif drone.image_url %}<img src="{{ drone.image_url }}" alt="{{ drone.name }}"
+           onerror="this.parentElement.innerHTML='<div style=\'height:200px;display:flex;align-items:center;justify-content:center;background:var(--surface2);\'><i class=\'bi bi-drone\' style=\'font-size:3rem;color:var(--wine);opacity:0.4;\'></i></div>'"/>
+      {% else %}<div style="height:200px;display:flex;align-items:center;justify-content:center;background:var(--surface2);"><i class="bi bi-drone" style="font-size:3rem;color:var(--wine);opacity:0.4;"></i></div>{% endif %}
+      <div class="p-3">
+        <div class="d-flex justify-content-between align-items-start mb-1">
+          <h6 class="fw-bold mb-0" style="font-size:0.88rem;">{{ drone.name }}</h6>
+          {% if drone.category %}<span style="background:rgba(123,29,46,0.15);color:var(--wine-lite);border-radius:5px;padding:2px 7px;font-size:0.62rem;font-weight:600;">{{ drone.category }}</span>{% endif %}
+        </div>
+        <div class="price-tag my-2">${{ drone.price }}</div>
+        <div class="d-flex gap-1 mb-3 flex-wrap">
+          {% if drone.flight_time_min %}<span class="stat-chip"><i class="bi bi-clock"></i>{{ drone.flight_time_min }}m</span>{% endif %}
+          {% if drone.range_km %}<span class="stat-chip"><i class="bi bi-broadcast"></i>{{ drone.range_km }}km</span>{% endif %}
+        </div>
+        <a href="{% url 'drone_detail' drone.pk %}" class="btn btn-accent btn-sm w-100">{% t 'view_details' %}</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
