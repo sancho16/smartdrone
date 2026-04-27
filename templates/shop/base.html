@@ -329,6 +329,57 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'sounds/click.js' %}"></script>
+<script>
+  // ── Page entrance animation ──────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.fade-up').forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, 80 + i * 60);
+    });
+
+    // Stagger card animations
+    document.querySelectorAll('.drone-card, .service-card, .card').forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      setTimeout(() => {
+        el.style.transition = 'opacity 0.45s ease, transform 0.45s ease, box-shadow 0.25s, border-color 0.25s';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, 120 + i * 50);
+    });
+
+    // Ripple effect on buttons
+    document.querySelectorAll('.btn-accent, .btn-gold').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.cssText = `
+          position:absolute;border-radius:50%;
+          width:${size}px;height:${size}px;
+          left:${e.clientX - rect.left - size/2}px;
+          top:${e.clientY - rect.top - size/2}px;
+          background:rgba(255,255,255,0.25);
+          transform:scale(0);animation:ripple 0.5s ease-out forwards;
+          pointer-events:none;
+        `;
+        this.style.position = 'relative';
+        this.style.overflow = 'hidden';
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+      });
+    });
+  });
+</script>
+<style>
+  @keyframes ripple { to { transform:scale(2.5); opacity:0; } }
+</style>
 {% block extra_js %}{% endblock %}
 </body>
 </html>
