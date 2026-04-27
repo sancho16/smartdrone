@@ -18,3 +18,6 @@ media/
 Thumbs.db
 *.log
 node_modules/
+static/videos/background.mov
+static/videos/background.mp4
+static/videos/background.webm

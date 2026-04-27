@@ -127,10 +127,11 @@
 
   <!-- Video background (shows if background.mov / background.mp4 exists) -->
   <div class="hero-video-wrap" id="heroVideoWrap">
-    <video id="heroBg" autoplay muted loop playsinline preload="auto"
+    <video id="heroBg" autoplay muted loop playsinline preload="metadata"
            onerror="document.getElementById('heroVideoWrap').style.display='none';document.getElementById('heroFallback').style.display='block';">
-      <source src="{% static 'videos/background.mov' %}" type="video/quicktime"/>
       <source src="{% static 'videos/background.mp4' %}" type="video/mp4"/>
+      <source src="{% static 'videos/background.mov' %}" type="video/mp4"/>
+      <source src="{% static 'videos/background.mov' %}" type="video/quicktime"/>
     </video>
   </div>
 
@@ -245,31 +246,45 @@
 <script>
 // ── Video background handling ────────────────────────────────────────────────
 (function () {
-  const video = document.getElementById('heroBg');
-  const wrap  = document.getElementById('heroVideoWrap');
+  const video    = document.getElementById('heroBg');
+  const wrap     = document.getElementById('heroVideoWrap');
   const fallback = document.getElementById('heroFallback');
-
   if (!video) return;
 
-  // If video fails to load any source, show fallback gradient
-  video.addEventListener('error', () => {
+  function showFallback() {
     wrap.style.display = 'none';
     fallback.style.display = 'block';
-  });
-
-  // If no sources loaded after 3s, show fallback
-  setTimeout(() => {
-    if (video.readyState === 0) {
-      wrap.style.display = 'none';
-      fallback.style.display = 'block';
-    }
-  }, 3000);
+  }
 
   // Smooth fade-in once video starts playing
   video.style.opacity = '0';
-  video.style.transition = 'opacity 1.2s ease';
+  video.style.transition = 'opacity 1.4s ease';
+
   video.addEventListener('playing', () => {
     video.style.opacity = '1';
+  });
+
+  // If canplay fires, force play (needed on some mobile browsers)
+  video.addEventListener('canplay', () => {
+    video.play().catch(() => {});
+  });
+
+  // Hard error on all sources exhausted
+  video.addEventListener('error', showFallback);
+
+  // If nothing loads after 6s, show fallback
+  const timeout = setTimeout(() => {
+    if (video.readyState < 2) showFallback();
+  }, 6000);
+
+  video.addEventListener('playing', () => clearTimeout(timeout));
+
+  // Force load — needed when browser defers loading
+  video.load();
+  video.play().catch(() => {
+    // Autoplay blocked — video will play on first user interaction
+    document.addEventListener('click', () => video.play().catch(() => {}), { once: true });
+    document.addEventListener('touchstart', () => video.play().catch(() => {}), { once: true });
   });
 })();
 

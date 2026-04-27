@@ -73,6 +73,13 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Allow whitenoise to serve large video files without compression
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = [
+    'jpg', 'jpeg', 'png', 'gif', 'webp', 'zip', 'gz', 'tgz', 'bz2',
+    'tbz', 'xz', 'br', 'swf', 'flv', 'woff', 'woff2',
+    'mov', 'mp4', 'webm', 'avi', 'mkv',  # video files — never compress
+]
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -81,3 +88,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Serve .mov files correctly
+import mimetypes
+mimetypes.add_type('video/mp4', '.mov')
+mimetypes.add_type('video/quicktime', '.mov')
