@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>SmartDrone</title>
+  <style>
+    body { margin:0; background:#0a0608; display:flex; align-items:center; justify-content:center; height:100vh; }
+    .loader { text-align:center; color:#c9a84c; font-family:sans-serif; }
+    .loader img { width:80px; border-radius:16px; margin-bottom:16px; }
+    .spinner { width:32px; height:32px; border:3px solid rgba(201,168,76,0.2); border-top-color:#c9a84c; border-radius:50%; animation:spin 0.8s linear infinite; margin:16px auto 0; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <div class="spinner"></div>
+  </div>
+  <script>
+    // Capacitor server.url in config handles the redirect automatically.
+    // This fallback is only shown if the native bridge isn't loaded.
+    setTimeout(() => {
+      window.location.href = 'https://smartdrone.onrender.com';
+    }, 1500);
+  </script>
+</body>
+</html>

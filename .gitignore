@@ -18,6 +18,10 @@ media/
 Thumbs.db
 *.log
 node_modules/
+mobile/node_modules/
+mobile/ios/App/Pods/
+mobile/android/.gradle/
+mobile/android/app/build/
 static/videos/background.mov
 static/videos/background.mp4
 static/videos/background.webm

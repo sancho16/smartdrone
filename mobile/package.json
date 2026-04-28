@@ -1,0 +1,23 @@
+{
+  "name": "smartdrone-mobile",
+  "version": "1.0.0",
+  "description": "SmartDrone iOS & Android app via Capacitor",
+  "scripts": {
+    "build": "echo 'No build step needed - uses live server'",
+    "ios": "npx cap open ios",
+    "android": "npx cap open android",
+    "sync": "npx cap sync"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/haptics": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}

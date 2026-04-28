@@ -325,6 +325,26 @@
         <p class="small mb-0 gold-shimmer" style="color:var(--gold-dim);">{% t 'footer_tagline' %}</p>
       </div>
     </div>
+
+    <!-- DJI Partner strip -->
+    <div class="mt-4 pt-4" style="border-top:1px solid var(--border);">
+      <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
+        <span style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Official Partner</span>
+        <div style="height:1px;width:40px;background:var(--border-gold);"></div>
+        {% if theme == 'dark' %}
+          <img src="{% static 'dji-logo-0.png' %}" alt="DJI Official Partner"
+               style="height:22px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.75;"
+               onerror="this.style.display='none'"/>
+        {% else %}
+          <img src="{% static 'dji-logo-0.png' %}" alt="DJI Official Partner"
+               style="height:22px;object-fit:contain;opacity:0.7;"
+               onerror="this.style.display='none'"/>
+        {% endif %}
+        <div style="height:1px;width:40px;background:var(--border-gold);"></div>
+        <span style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Authorized Repair Center</span>
+      </div>
+    </div>
+
   </div>
 </footer>
 

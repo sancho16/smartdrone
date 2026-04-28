@@ -1,16 +1,37 @@
 {% extends 'shop/base.html' %}
-{% load i18n_tags %}
+{% load static i18n_tags %}
 {% block title %}{% t 'repair_title' %} – SmartDrone{% endblock %}
 {% block content %}
+
+<!-- Header row: title + DJI Authorized badge -->
+<div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
+  <div>
+    <h1 class="section-title mb-1"><i class="bi bi-tools me-2"></i>{% t 'repair_title' %}</h1>
+    <p style="color:var(--text-muted);font-size:0.9rem;" class="mb-0">{% t 'repair_sub' %}</p>
+  </div>
+  <!-- DJI Authorized Repair Center badge -->
+  <div style="background:var(--surface);border:1px solid var(--border-gold);border-radius:14px;padding:14px 22px;display:inline-flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;">
+    {% if theme == 'dark' %}
+      <img src="{% static 'dji-logo-0.png' %}" alt="DJI"
+           style="height:30px;object-fit:contain;filter:brightness(0) invert(1);"/>
+    {% else %}
+      <img src="{% static 'dji-logo-0.png' %}" alt="DJI"
+           style="height:30px;object-fit:contain;"/>
+    {% endif %}
+    <span style="font-size:0.62rem;font-weight:700;letter-spacing:1.2px;color:var(--gold);text-transform:uppercase;">Authorized Repair Center</span>
+  </div>
+</div>
+
+<!-- Hero CTA -->
 <div class="text-center py-5 mb-4" style="background:linear-gradient(135deg,var(--surface),var(--surface2));border-radius:20px;border:1px solid var(--border);">
   <i class="bi bi-tools mb-2 d-block" style="font-size:3rem;color:var(--gold);"></i>
-  <h1 class="fw-bold" style="background:linear-gradient(135deg,var(--wine-lite),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">{% t 'repair_title' %}</h1>
   <p class="lead mb-4" style="color:var(--text-muted);">{% t 'repair_sub' %}</p>
   <a href="{% url 'repair_request' %}" class="btn btn-accent btn-lg px-5">
     <i class="bi bi-clipboard-plus me-2"></i>{% t 'repair_cta' %}
   </a>
 </div>
 
+<!-- What we repair -->
 <div class="row g-4 mb-5">
   <div class="col-md-6">
     <div class="card h-100 p-4">
@@ -36,6 +57,7 @@
   </div>
 </div>
 
+<!-- Turnaround times -->
 <h3 class="section-title mb-3">{% t 'turnaround' %}</h3>
 <div class="row g-3 mb-5">
   <div class="col-md-4">
@@ -63,9 +85,11 @@
     </div>
   </div>
 </div>
+
 <div class="text-center">
   <a href="{% url 'repair_request' %}" class="btn btn-accent btn-lg px-5">
     <i class="bi bi-clipboard-plus me-2"></i>{% t 'start_repair_btn' %}
   </a>
 </div>
+
 {% endblock %}
