@@ -8,3 +8,7 @@ matplotlib>=3.7
 numpy>=1.24
 gunicorn>=21.0
 whitenoise>=6.5
+djangorestframework>=3.14
+djangorestframework-simplejwt>=5.3
+django-cors-headers>=4.3
+PyJWT>=2.8
